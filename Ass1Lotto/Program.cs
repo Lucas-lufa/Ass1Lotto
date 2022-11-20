@@ -10,33 +10,27 @@ namespace Ass1Lotto
     {
         static void Main(string[] args)
         {
-            /*
-             * ask how many numbers and what is the random number range,
-             * default will be five numbers and a range of fifty
-             * need to validate that input is good.
-             * 
-             * Ctrl + k then Ctrl + c to comment out
-             * to undo ctrl + k then Ctrl + u
-            */
+            
             string userInput = "";
             int howMany;//the amount of numbers played
-            int ifAny = 0; //the max range of the random pool            
+            int ifAny = 0; //the max range of the random pool
             // Input valadation 
-            int theDefault = 5;
+            int theDefault = 5; 
             // int aDefault = 50;
-            int lowestValue = 0;
-            int highestValue = 10;
-
+            int lowestValue = 1; 
+            int highestValue = 10; 
+            int matches;
+          
             Random random = new Random();
 
             Console.WriteLine("Please enter how many number to be played.");
             Console.WriteLine("If left blank the default will be five. ");
-            Console.WriteLine("If enter slickpick all option will be selected by random");
+            Console.WriteLine("Type 'slickpick' to select game options at random");
             userInput = Console.ReadLine();
             howMany = InputValadation(userInput, theDefault, highestValue);
-            if (howMany < 0 )
+            if (howMany < 0 ) //if less than zero 
             {
-                ifAny = howMany;
+                ifAny = -1; //will than set ifany to less than zero so the ifaAny will be randomised
                 howMany = random.Next(lowestValue, highestValue);
             }
             Console.WriteLine($"Numbers Played will be {howMany}\n");
@@ -44,7 +38,7 @@ namespace Ass1Lotto
             {
                 Console.WriteLine("Please enter the pool the numbers will be picked from.");
                 Console.WriteLine("If left blank the default will be one hundred. ");
-                Console.WriteLine("If enter slickpick all option will be selected by random");
+                Console.WriteLine("Type 'slickpick' to select game options at random");
                 userInput = Console.ReadLine();
                 ifAny = InputValadation(userInput, theDefault = 100);
             }
@@ -60,8 +54,6 @@ namespace Ass1Lotto
             int[] playerArray = new int[howMany];
             int[] TheGameArray = new int[howMany];
 
-            TheGameArray[0] = random.Next(lowestValue = 1, ifAny);
-
             /* 
              * Now need for loop to populate array with unique numbers
             */
@@ -71,13 +63,10 @@ namespace Ass1Lotto
             bool checkDuplicate = true;
             Console.WriteLine($"Choose a number for selection {counter}");
             Console.WriteLine("If left blank will ramdonise the number");
-            Console.WriteLine("If enter slickpick all option will be selected by random");
+            Console.WriteLine("Type 'slickpick' to select the numbers at random");
             userInput = Console.ReadLine();
             possNumber = InputValadation(userInput, theDefault, ifAny);
-            
-            Console.WriteLine(possNumber + " possNumber");
-            Console.WriteLine(playerArray[0] + " playerArray[0]\n");
-
+                        
             if ( possNumber > 0 ) 
             {
                 playerArray[0] = possNumber;            
@@ -87,65 +76,67 @@ namespace Ass1Lotto
             {
                 playerArray[0] = random.Next(lowestValue = 1, ifAny);
                 possNumber = 0;
-                Console.WriteLine(playerArray[0] + " playerArray[0]\n");
             }
 
             if (possNumber < 0 )//if less than zero, slickpick option randomises all choices
             {
                 playerArray[0] = random.Next(lowestValue = 1, ifAny);
                 possNumber = -1;
-                Console.WriteLine(playerArray[0] + " playerArray[0]\n");
             }
             
-            // The for loop will three paths in it. 
-            // slickpick where it will choose each number at random
-            // When left blank will choose one number at rendom
-            // player chooses the number
-            // each must be unique
-             // Ctrl + k then Ctrl + c to comment out
-             // to undo ctrl + k then Ctrl + u
+            TheGameArray[0] = random.Next(lowestValue = 1, ifAny);
 
             /*
              * Checks possNumber if zero or above will ask for user input if at minus will do 
              * the slickpick routeen
              */
+
             for (int i = 1; i < playerArray.Length; i++)
             {
                 int possTheGame = 0;
                 counter++;
                 checkDuplicate = true;
 
-                while (checkDuplicate == true)
+                if (possNumber > 0)
+                {
+                    possNumber = 0;
+                }
+
+                while (checkDuplicate == true) //populates TheGameArray
                     {
                         possTheGame = random.Next(lowestValue = 1, ifAny);
-                        checkDuplicate = UniqueIn(playerArray, possNumber);
+                        checkDuplicate = UniqueIn(TheGameArray, possTheGame);
                     }
-                TheGameArray[i] = possTheGame;
+                
                 Console.WriteLine("The game number " + possTheGame);
+                TheGameArray[i] = possTheGame;
+                
                 checkDuplicate = true;
 
-                if (possNumber >= 0)//choice of choosing or randomising a number 
+                if (possNumber == 0)//choice of choosing or randomising a number 
                 {
                     Console.WriteLine($"Choose a number for selection {counter}");
                     Console.WriteLine("If left blank will ramdonise the number");
-                    Console.WriteLine("If enter slickpick all numbers will be selected by random");
+                    Console.WriteLine("Type 'slickpick' to select the numbers at random");
                     userInput = Console.ReadLine();
                     possNumber = InputValadation(userInput, theDefault, ifAny);
-                    Console.WriteLine( possNumber + " for loop possNumber");
 
-
-                    //while not unique or choose random == 0 or choose all random == -1
-                    while (checkDuplicate == true && possNumber < 0)
-                    {
+                    //while not unique and possNumber is not 0 or -1
+                    while (checkDuplicate == true && possNumber > 0)
+                    {                        
                         checkDuplicate = UniqueIn(playerArray, possNumber);
                         if (checkDuplicate == true)
                         {
                             Console.WriteLine($"Choose a number for selection {counter}");
                             Console.WriteLine("The number needs to be unique!");
                             Console.WriteLine("If left blank will ramdonise the number");
-                            Console.WriteLine("If enter slickpick all numbers will be selected by random");
+                            Console.WriteLine("Type 'slickpick' to select the numbers at random");
                             userInput = Console.ReadLine();
                             possNumber = InputValadation(userInput, theDefault, ifAny);
+                        }
+                        if (possNumber <= 0)
+                        {
+                            break;
                         }
 
                     }
@@ -165,7 +156,6 @@ namespace Ass1Lotto
                     {
                         possNumber = random.Next(lowestValue = 1, ifAny);
                         checkDuplicate = UniqueIn(playerArray, possNumber);
-                        Console.WriteLine("debug finding a unique random " + possNumber);
                     }
 
                     playerArray[i] = possNumber;
@@ -182,23 +172,16 @@ namespace Ass1Lotto
                     {
                         possNumber = random.Next(lowestValue = 1, ifAny);
                         checkDuplicate = UniqueIn(playerArray, possNumber);
-                        Console.WriteLine("debug finding a unique random " + possNumber);
                     }
 
                     playerArray[i] = possNumber;
                     possNumber = -1;
                 }
             Console.WriteLine(playerArray[i] + $" {counter} player number");
-            }
-               
-            Console.WriteLine(howMany + " howMany");
-            Console.WriteLine(ifAny + " ifAny");
-            
-            Array.Sort(playerArray);
+            }//end of for
+                                      
             Array.Sort(TheGameArray);
-
-
-            //test for loop
+                            
             string player = "";
             string game = "";
             for (int i = 0; i < playerArray.Length; i++)
@@ -206,96 +189,80 @@ namespace Ass1Lotto
                 player = player + " " + playerArray[i];
                 game = game + " " + TheGameArray[i];
 			}
-            
             Console.WriteLine(player + " player contents");            
-            Console.WriteLine(game + " game cntents");            
-            Console.WriteLine(playerArray.Length + " playerArray length");            
-            Console.ReadLine();
-            
-            /*
-             * for loop to go through the the array.
-             *  select numbers to fill the array.
-             *   if any selected by random use the lowest and highest bounds
-             *   validate is a number, within bounds 
-             *   and unique
-             *   if these not meet reselect number or get new random number
-             * then sort the array  
-             * 
-             * make the drawer arrey
-             *  
-             */
+            Console.WriteLine(game + " game contents");
+                       
+            matches = BinarySearch(playerArray,TheGameArray);
+            Console.WriteLine($"Matches = {matches}");
+
+            Console.ReadLine();            
            
         }
-
-    /*
-     * To do the binary search need to loop through the the array and try to find the number in the other arry
-        * for goes through the player array.
-             * when i == to index zero, sets the min to index zero and the Max to array.lenght
-             * or before the for starts
-        * while not found or min and max are not equal
-             * finds min checks if it is the number - if so returns true
-             * finds Max checks if it is the number - if so returns true
-             * finds midle checks if it is the number - if so returns true
-             * checks if midle is less or greater than what we are looking for
-             * - if is less than makes min the middle value and moves it up one, Max moves down one
-             *   - Check if min equals Max, if returns did not find the number
-             * - if is more than makes Max the middle value and moves it down one, min moves up one
-             *   - Check if min equals Max, if returns did not find the number
-             * if min wquals Max brakes the while and returns false, the number was not found
-    */
+    
         static int BinarySearch(int[] playArray, int[] gameArray)
         {
-            int arrayLength = playArray.Lenght
+            int arrayLenght = playArray.Length;
             int check = 0; //variable to check
             int min = 0; //the index
             int middle = 0;
-            int Max = gameArray.Length; //the index
+            int Max = gameArray.Length - 1; //the index
             int matched = 0;
-            for (int i = 0; i < arrayLength; i++)
+            for (int i = 0; i < arrayLenght; i++)
 			{
                 check = playArray[i];
-                while (min != Max) // maybe make min is less than Max as the while condition
-                {
-                    if (check == gameArray[min])
+                min = 0; //the index
+                Max = (gameArray.Length) - 1; //the index
+
+                if (check == gameArray[min])
                     {
                         matched++;
-                    }                   
-                    if (check == gameArray[Max])
-                    {
-                        matched++;
+                        continue;
                     }
+                if (check == gameArray[Max])
+                    {
+                        matched++;
+                        continue;
+                    }
+
+                while (min < Max) // maybe make min is less than Max as the while condition
+                {                                                           
                     // find and check middle
-                    middle = min + (min - Max) / 2;
+                    middle = (min + Max) / 2;
                     if (check == gameArray[middle])
                     {
                         matched++;
+                        break;
                     }
                     // less that check
                     if (gameArray[middle] < check)
                     {
                         min = middle + 1;
-                        if ( min == Max)
+                        if ( check == gameArray[min] )
                         {
                             matched++;
+                            break;
                         }
                         Max = Max - 1;
-                        if ( min == Max)
+                        if ( check == gameArray[Max] )
                         {
                             matched++;
+                            break;
                         }
                     }                    
                     // more that check
-                    if (gameArray[middle] > check)
+                    if ( gameArray[middle] > check )
                     {
                         Max = middle - 1;
-                        if ( min == Max)
+                        if ( check == gameArray[Max] )
                         {
                             matched++;
+                            break;
                         }
                         min = min + 1;
-                        if ( min == Max)
+                        if ( check == gameArray[min])
                         {
                             matched++;
+                            break;
                         }
                     }
                 }
@@ -322,28 +289,65 @@ namespace Ass1Lotto
 
                 isDuplicate = true;
                 if (array[i] == possNumber)
-                {
-                    isDuplicate = true;
+                {                   
                     return true;
                 }
             }
             return false;
         }
 
-        static int InputValadation( string userInput, int aDefault = 5, int highBounds = 0, int lowBounds = 0)
+        static int InputValadation( string userInput, int aDefault = 5, int highBounds = 0, int lowBounds = 1)
         {
             int validOutput = 0;
             int possably_valid;
 
+            if (!int.TryParse(userInput, out possably_valid))
+                {
+                    if (string.IsNullOrEmpty(userInput))
+                    {
+                        return aDefault;                     
+                    }
+
+                    if (userInput.ToLower() == "slickpick")
+                    {
+                        validOutput = -1;
+                        return validOutput;
+                    }
+                    Console.WriteLine("Please enter a number ");
+                }
+                
+                if (possably_valid < lowBounds )
+                {
+                    possably_valid = 0;
+                    Console.WriteLine("Please enter a number greater than zero");                         
+                }
+                               
+                if (highBounds > 0)
+                {
+                    if (possably_valid > highBounds)
+                    {
+                        possably_valid = 0;
+                        Console.WriteLine("Please enter a number within the high bounds");                         
+                    }
+                    
+                }
+                
+                if (possably_valid > 0)
+                {
+                    validOutput = possably_valid;
+                }
+
             while (validOutput == 0)
             {
+                userInput = Console.ReadLine();
+
                 if (!int.TryParse(userInput, out possably_valid))
                 {
                     if (string.IsNullOrEmpty(userInput))
                     {
-                        return aDefault;
-                        
+                        return aDefault;                     
                     }
+
                     if (userInput.ToLower() == "slickpick")
                     {
                         validOutput = -1;
@@ -351,86 +355,59 @@ namespace Ass1Lotto
                     }
                     Console.WriteLine("Please enter a number ");
                 }
-               
+                
+                if (possably_valid < lowBounds )
+                {
+                    possably_valid = 0;
+                    Console.WriteLine("Please enter a number greater than zero");                         
+                }
+                               
                 if (highBounds > 0)
                 {
                     if (possably_valid > highBounds)
                     {
                         possably_valid = 0;
-                        Console.WriteLine("Please enter a number within the bounds");                         
+                        Console.WriteLine("Please enter a number within the high bounds");                         
                     }
-                    else
-                    {
-                        validOutput = possably_valid;
-                    }
+                    
                 }
-
+                
                 if (possably_valid > 0)
                 {
                     validOutput = possably_valid;
                 }
-
-                if (validOutput == 0)
-                {
-                    userInput = Console.ReadLine();
-                }
                 
             }
-
             return validOutput;
         }
+        
+        /*
+     * //test for loop
+            string player = "";
+            string game = "";
+            for (int i = 0; i < playerArray.Length; i++)
+			{
+                player = player + " " + playerArray[i];
+                game = game + " " + TheGameArray[i];
+			}
+            Console.WriteLine(player + " player contents");            
+            Console.WriteLine(game + " game contents");            
+            Console.WriteLine(playerArray.Length + " playerArray length");
+            
 
+            playerArray = new int[] { 1,2,3,4,5};
+            TheGameArray = new int[] { 1,2,3,4,5};
+
+            player = "";
+            game = "";
+            for (int i = 0; i < playerArray.Length; i++)
+			{
+                player = player + " " + playerArray[i];
+                game = game + " " + TheGameArray[i];
+			}
+            Console.WriteLine(player + " player contents");            
+            Console.WriteLine(game + " game contents");         
+    */
     }
-    //while (int.TryParse(userInput, out validOutput))
-    //{               
-    //    if (highBounds > 0)
-    //    {
-    //        if (validOutput > highBounds)
-    //        {
-    //            Console.WriteLine("Please enter a number within the bounds");
-    //            userInput = Console.ReadLine();
-    //        }
-    //        else
-    //        {
-    //            return validOutput;
-    //        }                    
-    //    }
-
-    //}
-    //while (!int.TryParse(userInput, out validOutput))
-    //{
-    //    if (string.IsNullOrEmpty(userInput))
-    //    {                    
-    //        validOutput = aDefault;
-    //        break;
-    //    }
-    //    if (userInput.ToLower() == "slickpick")
-    //    {
-    //        validOutput = -1;
-    //        break;
-    //    }                
-    //    Console.WriteLine("Please enter a number ");
-    //    userInput = Console.ReadLine();
-    //}
-
-    //if (string.IsNullOrEmpty(userInput)) { howMany = theDefault; }
-    //else if (userInput == "slickpick")
-    //{
-
-    //    howMany = random.Next(lowestValue, highestValue);
-    //}
-    //else
-    //{
-    //    while (!int.TryParse(userInput, out howMany))
-    //    {
-    //        Console.WriteLine("Please enter a number ");
-    //        userInput = Console.ReadLine();
-    //    }
-    //}
-
-
-
-
-
 }
 
